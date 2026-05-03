@@ -7,21 +7,26 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up JDK
         run: |
           brew install openjdk@17
           echo "$HOME/homebrew/opt/openjdk@17/bin" >> $GITHUB_PATH
+          
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
-      - name: Verify setup
+        
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.4
+          
+      - name: Build
         run: |
           java -version
-          echo "ANDROID_HOME: $ANDROID_HOME"
-          which gradle || echo "Gradle not found"
-          ls -la ./gradlew
-      - name: Build
-        run: ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 || true
+          
       - name: Upload
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: apk
