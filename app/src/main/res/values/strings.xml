@@ -42,8 +42,8 @@
     <string name="comic">Comic</string>
     <string name="oil_painting">Oil Painting</string>
     <string name="watercolor_art">Watercolor</string>
-    <string name="3d_render">3D Render</string>
-    <string name="clay_render">Clay</string>
+    <string name="render_3d">3D Render</string>
+    <string name="render_clay">Clay</string>
     <string name="scifi">Sci-Fi</string>
     <string name="auto_colorize">Auto Colorize</string>
     <string name="background_gen">Background</string>
@@ -58,7 +58,7 @@
     <string name="jpg">JPG</string>
     <string name="transparent_png">Transparent PNG</string>
     <string name="hd_export">HD Export</string>
-    <string name="4k_export">4K Export</string>
+    <string name="export_4k">4K Export</string>
     <string name="no_projects">No projects yet</string>
     <string name="create_first">Create your first masterpiece!</string>
 </resources>

@@ -149,18 +149,18 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawStroke(stroke: 
     path.lineTo(points.last().offset.x, points.last().offset.y)
     
     // Set up stroke style based on brush type
-    val strokeStyle = Stroke(
-        cap = StrokeCap.Round,
-        join = StrokeJoin.Round,
-        width = stroke.brushSize.dp.toPx()
-    )
+    val baseWidth = stroke.brushSize.dp.toPx()
     
     when (stroke.brushType) {
         BrushType.ERASER -> {
             drawPath(
                 path = path,
                 color = Color.Transparent,
-                style = strokeStyle.copy(brushSize = stroke.brushSize.dp.toPx() * 2)
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth * 2
+                )
             )
         }
         BrushType.NEON -> {
@@ -168,12 +168,20 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawStroke(stroke: 
             drawPath(
                 path = path,
                 color = stroke.color.copy(alpha = 0.3f),
-                style = strokeStyle.copy(width = stroke.brushSize.dp.toPx() * 3)
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth * 3
+                )
             )
             drawPath(
                 path = path,
                 color = stroke.color,
-                style = strokeStyle
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth
+                )
             )
         }
         BrushType.GLOW -> {
@@ -182,34 +190,51 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawStroke(stroke: 
                 drawPath(
                     path = path,
                     color = stroke.color.copy(alpha = (1f - i * 0.25f) * 0.5f),
-                    style = strokeStyle.copy(width = stroke.brushSize.dp.toPx() * (1 + i * 0.5f))
+                    style = Stroke(
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round,
+                        width = baseWidth * (1 + i * 0.5f)
+                    )
                 )
             }
             drawPath(
                 path = path,
                 color = stroke.color,
-                style = strokeStyle
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth
+                )
             )
         }
         BrushType.WATERCOLOR -> {
             drawPath(
                 path = path,
                 color = stroke.color.copy(alpha = stroke.opacity * 0.4f),
-                style = strokeStyle.copy(width = stroke.brushSize.dp.toPx() * 1.5f)
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth * 1.5f
+                )
             )
             drawPath(
                 path = path,
                 color = stroke.color.copy(alpha = stroke.opacity * 0.6f),
-                style = strokeStyle
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth
+                )
             )
         }
         BrushType.MARKER -> {
             drawPath(
                 path = path,
                 color = stroke.color.copy(alpha = stroke.opacity * 0.8f),
-                style = strokeStyle.copy(
+                style = Stroke(
                     cap = StrokeCap.Square,
-                    width = stroke.brushSize.dp.toPx()
+                    join = StrokeJoin.Miter,
+                    width = baseWidth
                 )
             )
         }
@@ -217,7 +242,11 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawStroke(stroke: 
             drawPath(
                 path = path,
                 color = stroke.color.copy(alpha = stroke.opacity),
-                style = strokeStyle
+                style = Stroke(
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    width = baseWidth
+                )
             )
         }
     }
