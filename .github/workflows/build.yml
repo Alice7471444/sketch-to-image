@@ -21,12 +21,9 @@ jobs:
           gradle-version: 8.4
           
       - name: Build
-        run: |
-          java -version
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 || true
+        run: ./gradlew assembleDebug --no-daemon
           
       - name: Upload
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: apk
