@@ -1,0 +1,49 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+local.properties
+*.iml
+*.lock
+
+# Android Studio / IntelliJ
+.idea/
+*.hprof
+*.pro
+*.proguard
+*.smali
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*~
+
+# Local configuration (sdk path, etc)
+local.properties
+
+# Log Files
+*.log
+
+# Secrets
+secrets.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_primary">#FF6366F1</color>
+    <color name="purple_primary_variant">#FF4F46E5</color>
+    <color name="cyan_secondary">#FF06B6D4</color>
+    <color name="cyan_secondary_variant">#FF0891B2</color>
+    <color name="background_dark">#FF0A0A0F</color>
+    <color name="surface_dark">#FF1A1A2E</color>
+    <color name="surface_variant">#FF252542</color>
+    <color name="neon_pink">#FFEC4899</color>
+    <color name="neon_purple">#FFA855F7</color>
+    <color name="neon_blue">#FF3B82F6</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_hint">#66FFFFFF</color>
+    <color name="error">#FFEF4444</color>
+    <color name="success">#FF22C55E</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="white_10">#1AFFFFFF</color>
+    <color name="white_20">#33FFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+</resources>
