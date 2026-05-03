@@ -33,31 +33,7 @@ fun SketchToImageNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route,
-        enterTransition = {
-            fadeIn(animationSpec = tween(300)) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = tween(300)
-            )
-        },
-        exitTransition = {
-            fadeOut(animationSpec = tween(300)) + slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = tween(300)
-            )
-        },
-        popEnterTransition = {
-            fadeIn(animationSpec = tween(300)) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = tween(300)
-            )
-        },
-        popExitTransition = {
-            fadeOut(animationSpec = tween(300)) + slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = tween(300)
-            )
-        }
+        startDestination = Screen.Splash.route
     ) {
         composable(Screen.Splash.route) {
             SplashScreen(
