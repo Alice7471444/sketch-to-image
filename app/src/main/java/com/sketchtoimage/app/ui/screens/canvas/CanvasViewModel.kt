@@ -5,11 +5,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sketchtoimage.app.domain.model.AIArtStyle
+import com.sketchtoimage.app.domain.model.AIImageGenerator
 import com.sketchtoimage.app.domain.model.BrushStroke
 import com.sketchtoimage.app.domain.model.BrushType
 import com.sketchtoimage.app.domain.model.Stroke
 import com.sketchtoimage.app.domain.usecase.GenerateImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +31,10 @@ data class CanvasUiState(
     val isDrawing: Boolean = false,
     val prompt: String = "",
     val selectedStyle: AIArtStyle = AIArtStyle.REALISTIC,
+    val selectedGenerator: AIImageGenerator = AIImageGenerator.STABLE_DIFFUSION,
     val isGenerating: Boolean = false,
+    val isLoading: Boolean = false,
+    val loadingMessage: String = "Interpreting sketch...",
     val generatedImage: String? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
@@ -60,7 +65,13 @@ class CanvasViewModel @Inject constructor(
             brushType = _uiState.value.activeBrushType,
             opacity = _uiState.value.brushOpacity
         )
-        _uiState.update { it.copy(isDrawing = true) }
+        // Add current stroke to list immediately for real-time rendering
+        _uiState.update { 
+            it.copy(
+                isDrawing = true,
+                strokes = it.strokes + currentStroke
+            ) 
+        }
     }
     
     fun onDrawMove(point: Offset) {
@@ -73,22 +84,22 @@ class CanvasViewModel @Inject constructor(
             )
             currentStroke = updatedStroke
             
+            // Update the stroke in real-time
             _uiState.update {
-                it.copy(
-                    strokes = it.strokes.dropLast(if (currentStroke != null) 1 else 0) + updatedStroke
-                )
+                val strokesWithoutLast = if (it.strokes.isNotEmpty()) it.strokes.dropLast(1) else it.strokes
+                it.copy(strokes = strokesWithoutLast + updatedStroke)
             }
         }
     }
     
     fun onDrawEnd() {
         currentStroke?.let { stroke ->
+            // Final stroke is already in the list from onDrawStart/onDrawMove
             _uiState.update {
                 it.copy(
-                    strokes = it.strokes + stroke,
                     undoStack = it.undoStack + stroke,
                     isDrawing = false,
-                    canUndo = it.undoStack.isNotEmpty()
+                    canUndo = true
                 )
             }
         }
@@ -159,13 +170,37 @@ class CanvasViewModel @Inject constructor(
     
     fun generateImage() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isGenerating = true) }
+            // Start loading phase
+            _uiState.update { 
+                it.copy(
+                    isGenerating = true,
+                    isLoading = true,
+                    loadingMessage = "Interpreting sketch..."
+                ) 
+            }
+            
+            // Animate through loading messages
+            val loadingMessages = listOf(
+                "Interpreting sketch...",
+                "Analyzing strokes...",
+                "Generating details...",
+                "Adding textures...",
+                "Refining edges...",
+                "Bringing imagination to life..."
+            )
             
             try {
+                // Show progressive loading messages
+                for (i in loadingMessages.indices) {
+                    delay(600)
+                    _uiState.update { it.copy(loadingMessage = loadingMessages[i]) }
+                }
+                
                 val request = com.sketchtoimage.app.domain.model.GenerationRequest(
-                    sketchData = "", // Would serialize strokes
+                    sketchData = "sketch_${System.currentTimeMillis()}",
                     style = _uiState.value.selectedStyle,
-                    prompt = _uiState.value.prompt
+                    prompt = _uiState.value.prompt.ifEmpty { _uiState.value.selectedStyle.prompt },
+                    generator = _uiState.value.selectedGenerator
                 )
                 
                 val result = generateImageUseCase(request)
@@ -174,18 +209,39 @@ class CanvasViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isGenerating = false,
+                                isLoading = false,
                                 generatedImage = generationResult.imageUrl
                             )
                         }
                     },
-                    onFailure = {
-                        _uiState.update { it.copy(isGenerating = false) }
+                    onFailure = { error ->
+                        _uiState.update { 
+                            it.copy(
+                                isGenerating = false, 
+                                isLoading = false,
+                                loadingMessage = "Generation failed. Please try again."
+                            ) 
+                        }
                     }
                 )
             } catch (e: Exception) {
-                _uiState.update { it.copy(isGenerating = false) }
+                _uiState.update { 
+                    it.copy(
+                        isGenerating = false, 
+                        isLoading = false,
+                        loadingMessage = "Error: ${e.message ?: "Unknown error"}"
+                    ) 
+                }
             }
         }
+    }
+    
+    fun setGenerator(generator: AIImageGenerator) {
+        _uiState.update { it.copy(selectedGenerator = generator) }
+    }
+    
+    fun retryGeneration() {
+        generateImage()
     }
     
     fun clearGeneratedImage() {
